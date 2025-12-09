@@ -1,3 +1,4 @@
+// src/app/(auth)/login/page.tsx
 "use client";
 
 import * as React from "react";
@@ -16,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { loginSchema, LoginInput } from "@/lib/validations";
 import { useAuthStore } from "@/stores/auth-store";
 import { mockUsers } from "@/data/mock-users";
+import { ROUTES } from "@/lib/constants";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,7 +38,20 @@ export default function LoginPage() {
     if (user && data.password === "password123") {
       login(user, "mock-jwt-token");
       toast.success("Login berhasil!");
-      router.push("/");
+
+      // Role-based redirect
+      switch (user.role) {
+        case "ADMIN":
+          router.push(ROUTES.ADMIN.DASHBOARD);
+          break;
+        case "SELLER":
+          router.push(ROUTES.SELLER.DASHBOARD);
+          break;
+        case "CUSTOMER":
+        default:
+          router.push(ROUTES.HOME);
+          break;
+      }
     } else {
       toast.error("Email atau password salah");
     }
@@ -107,10 +122,12 @@ export default function LoginPage() {
 
       <div className="mt-6 p-4 bg-muted/50 rounded-lg text-sm">
         <p className="font-medium mb-2">Demo Accounts:</p>
-        <p className="text-muted-foreground">Customer: customer@example.com</p>
-        <p className="text-muted-foreground">Seller: seller@example.com</p>
-        <p className="text-muted-foreground">Admin: admin@example.com</p>
-        <p className="text-muted-foreground mt-1">Password: password123</p>
+        <div className="space-y-1 text-muted-foreground">
+          <p>🛒 Customer: <span className="font-mono">customer@example.com</span></p>
+          <p>🏪 Seller: <span className="font-mono">seller@example.com</span></p>
+          <p>⚙️ Admin: <span className="font-mono">admin@example.com</span></p>
+        </div>
+        <p className="mt-2 text-muted-foreground">Password: <span className="font-mono">password123</span></p>
       </div>
     </div>
   );

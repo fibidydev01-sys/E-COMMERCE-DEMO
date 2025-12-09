@@ -12,14 +12,14 @@ interface FlashDealsProps {
   endTime: Date;
 }
 
-// TimeBlock component moved OUTSIDE the main component
+// TimeBlock component
 function TimeBlock({ value, label }: { value: number; label: string }) {
   return (
-    <div className="text-center">
-      <div className="bg-red-600 text-white font-mono font-bold text-xl px-3 py-2 rounded-lg min-w-[50px]">
+    <div className="flex flex-col items-center">
+      <div className="bg-red-600 text-white font-mono font-bold text-xl px-3 py-2 rounded-lg min-w-[50px] flex items-center justify-center">
         {String(value).padStart(2, "0")}
       </div>
-      <span className="text-xs text-muted-foreground mt-1">{label}</span>
+      <span className="text-xs text-white/80 mt-1">{label}</span>
     </div>
   );
 }
@@ -46,6 +46,7 @@ export function FlashDeals({ products, endTime }: FlashDealsProps) {
 
   return (
     <section className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-6 md:p-8">
+      {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-lg">
@@ -57,8 +58,9 @@ export function FlashDeals({ products, endTime }: FlashDealsProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-white font-medium">Berakhir dalam:</span>
+        {/* Countdown Timer */}
+        <div className="flex items-center gap-3">
+          <span className="text-white font-medium hidden sm:inline">Berakhir dalam:</span>
           <div className="flex items-center gap-2">
             <TimeBlock value={timeLeft.hours} label="Jam" />
             <span className="text-white text-xl font-bold">:</span>
@@ -69,14 +71,23 @@ export function FlashDeals({ products, endTime }: FlashDealsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      {/* Products Grid - SIMETRIS! */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
         {products.slice(0, 5).map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <div key={product.id} className="w-full">
+            <ProductCard product={product} className="h-full" />
+          </div>
         ))}
       </div>
 
+      {/* View All Button */}
       <div className="mt-6 text-center">
-        <Button variant="secondary" size="lg" className="bg-white text-red-600 hover:bg-white/90" asChild>
+        <Button
+          variant="secondary"
+          size="lg"
+          className="bg-white text-red-600 hover:bg-white/90 font-semibold"
+          asChild
+        >
           <Link href="/products?sale=true">
             Lihat Semua Promo <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

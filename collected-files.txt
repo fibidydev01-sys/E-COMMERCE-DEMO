@@ -1,6 +1,6 @@
 ========================================
 COLLECTED FILES - E-COMMERCE PROJECT
-Generated: Wed, Dec 10, 2025 12:48:23 AM
+Generated: Wed, Dec 10, 2025  1:10:34 AM
 ========================================
 
 
@@ -14,7 +14,12 @@ import { MapPin, Plus, Trash2, Edit, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AddressForm } from "@/components/checkout/address-form";
 import { mockAddresses } from "@/data/mock-addresses";
@@ -33,23 +38,36 @@ export default function AddressesPage() {
     toast.success("Alamat utama diperbarui");
   };
 
+  const handleAddAddress = () => {
+    setIsDialogOpen(false);
+    toast.success("Alamat ditambahkan");
+  };
+
   return (
     <div className="flex-1">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-heading font-bold">Alamat Saya</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Tambah Alamat</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader><DialogTitle>Tambah Alamat Baru</DialogTitle></DialogHeader>
-            <AddressForm onSubmit={() => { setIsDialogOpen(false); toast.success("Alamat ditambahkan"); }} />
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Tambah Alamat
+        </Button>
       </div>
 
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Tambah Alamat Baru</DialogTitle>
+          </DialogHeader>
+          <AddressForm onSubmit={handleAddAddress} />
+        </DialogContent>
+      </Dialog>
+
       {addresses.length === 0 ? (
-        <EmptyState icon={MapPin} title="Belum ada alamat" description="Tambahkan alamat pengiriman" />
+        <EmptyState
+          icon={MapPin}
+          title="Belum ada alamat"
+          description="Tambahkan alamat pengiriman"
+        />
       ) : (
         <div className="space-y-4">
           {addresses.map((address) => (
@@ -57,23 +75,40 @@ export default function AddressesPage() {
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{address.label}</span>
-                  {address.isDefault && <Badge variant="secondary">Utama</Badge>}
+                  {address.isDefault && (
+                    <Badge variant="secondary">Utama</Badge>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   {!address.isDefault && (
-                    <Button variant="ghost" size="sm" onClick={() => handleSetDefault(address.id)}>
-                      <Star className="h-4 w-4 mr-1" />Jadikan Utama
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSetDefault(address.id)}
+                    >
+                      <Star className="h-4 w-4 mr-1" />
+                      Jadikan Utama
                     </Button>
                   )}
-                  <Button variant="ghost" size="icon"><Edit className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDelete(address.id)}>
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-500"
+                    onClick={() => handleDelete(address.id)}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               <p className="font-medium">{address.recipient}</p>
               <p className="text-sm text-muted-foreground">{address.phone}</p>
-              <p className="text-sm text-muted-foreground mt-1">{address.street}, {address.city}, {address.province} {address.postalCode}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {address.street}, {address.city}, {address.province}{" "}
+                {address.postalCode}
+              </p>
             </div>
           ))}
         </div>
@@ -87,14 +122,23 @@ FILE: src/app/(account)/notifications/page.tsx
 ========================================
 "use client";
 
-import { Bell, Package, CreditCard, Truck, Tag, Settings, Check } from "lucide-react";
+import * as React from "react";
+import {
+  Bell,
+  Package,
+  CreditCard,
+  Truck,
+  Tag,
+  Settings,
+  Check,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useNotificationStore } from "@/stores/notification-store";
-import { formatDate } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
+import { Notification } from "@/types";
 
-const typeIcons = {
+const typeIcons: Record<Notification["type"], React.ElementType> = {
   ORDER: Package,
   PAYMENT: CreditCard,
   SHIPPING: Truck,
@@ -111,32 +155,62 @@ export default function NotificationsPage() {
         <h1 className="text-2xl font-heading font-bold">Notifikasi</h1>
         {notifications.length > 0 && (
           <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-            <Check className="h-4 w-4 mr-2" />Tandai Semua Dibaca
+            <Check className="h-4 w-4 mr-2" />
+            Tandai Semua Dibaca
           </Button>
         )}
       </div>
 
       {notifications.length === 0 ? (
-        <EmptyState icon={Bell} title="Tidak ada notifikasi" description="Notifikasi akan muncul di sini" />
+        <EmptyState
+          icon={Bell}
+          title="Tidak ada notifikasi"
+          description="Notifikasi akan muncul di sini"
+        />
       ) : (
         <div className="space-y-2">
           {notifications.map((notif) => {
             const Icon = typeIcons[notif.type] || Bell;
+            const isUnread = !notif.isRead;
+
             return (
               <div
                 key={notif.id}
                 onClick={() => markAsRead(notif.id)}
-                className={cn("flex gap-4 p-4 rounded-xl cursor-pointer transition-colors", notif.isRead ? "bg-card" : "bg-primary/5 border border-primary/20")}
+                className={cn(
+                  "flex gap-4 p-4 rounded-xl cursor-pointer transition-colors",
+                  isUnread
+                    ? "bg-primary/5 border border-primary/20"
+                    : "bg-card"
+                )}
               >
-                <div className={cn("p-2 rounded-full", notif.isRead ? "bg-muted" : "bg-primary/10")}>
-                  <Icon className={cn("h-5 w-5", notif.isRead ? "text-muted-foreground" : "text-primary")} />
+                <div
+                  className={cn(
+                    "p-2 rounded-full",
+                    isUnread ? "bg-primary/10" : "bg-muted"
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      "h-5 w-5",
+                      isUnread ? "text-primary" : "text-muted-foreground"
+                    )}
+                  />
                 </div>
                 <div className="flex-1">
-                  <p className={cn("font-medium", !notif.isRead && "text-primary")}>{notif.title}</p>
-                  <p className="text-sm text-muted-foreground">{notif.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{formatDate(notif.createdAt)}</p>
+                  <p className={cn("font-medium", isUnread && "text-primary")}>
+                    {notif.title}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {notif.message}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatDate(notif.createdAt)}
+                  </p>
                 </div>
-                {!notif.isRead && <div className="w-2 h-2 rounded-full bg-primary mt-2" />}
+                {isUnread && (
+                  <div className="w-2 h-2 rounded-full bg-primary mt-2" />
+                )}
               </div>
             );
           })}
@@ -151,11 +225,19 @@ FILE: src/app/(account)/orders/[id]/page.tsx
 ========================================
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle, MapPin, CreditCard, FileText, MessageCircle } from "lucide-react";
+import {
+  CheckCircle,
+  MapPin,
+  CreditCard,
+  FileText,
+  MessageCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { OrderTimeline } from "@/components/order/order-timeline";
 import { mockOrders } from "@/data/mock-orders";
 import { mockAddresses } from "@/data/mock-addresses";
@@ -163,13 +245,15 @@ import { formatPrice } from "@/lib/utils";
 import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/constants";
 
 interface OrderDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function OrderDetailPage({ params }: OrderDetailPageProps) {
+function OrderDetailContent({ orderId }: { orderId: string }) {
   const searchParams = useSearchParams();
   const isSuccess = searchParams.get("success") === "true";
-  const order = mockOrders.find((o) => o.id === params.id || o.orderNumber === params.id);
+  const order = mockOrders.find(
+    (o) => o.id === orderId || o.orderNumber === orderId
+  );
 
   if (!order) {
     return <div className="flex-1 text-center py-12">Pesanan tidak ditemukan</div>;
@@ -184,8 +268,12 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
           <CheckCircle className="h-6 w-6 text-green-600" />
           <div>
-            <p className="font-semibold text-green-800">Pesanan Berhasil Dibuat!</p>
-            <p className="text-sm text-green-700">Silakan lakukan pembayaran sesuai metode yang dipilih.</p>
+            <p className="font-semibold text-green-800">
+              Pesanan Berhasil Dibuat!
+            </p>
+            <p className="text-sm text-green-700">
+              Silakan lakukan pembayaran sesuai metode yang dipilih.
+            </p>
           </div>
         </div>
       )}
@@ -195,42 +283,75 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           <p className="text-sm text-muted-foreground">No. Pesanan</p>
           <p className="font-mono font-semibold">{order.orderNumber}</p>
         </div>
-        <Badge variant={order.status === "DELIVERED" ? "delivered" : order.status === "CANCELLED" ? "cancelled" : order.status === "SHIPPED" ? "shipped" : order.status === "PROCESSING" ? "processing" : "pending"}>
+        <Badge
+          variant={
+            order.status === "DELIVERED"
+              ? "delivered"
+              : order.status === "CANCELLED"
+                ? "cancelled"
+                : order.status === "SHIPPED"
+                  ? "shipped"
+                  : order.status === "PROCESSING"
+                    ? "processing"
+                    : "pending"
+          }
+        >
           {statusLabel}
         </Badge>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Timeline */}
         <div className="bg-card rounded-xl border p-6">
           <h3 className="font-semibold mb-4">Status Pesanan</h3>
-          <OrderTimeline status={order.status} createdAt={order.createdAt} shippedAt={order.shippedAt} deliveredAt={order.deliveredAt} cancelledAt={order.cancelledAt} />
+          <OrderTimeline
+            status={order.status}
+            createdAt={order.createdAt}
+            shippedAt={order.shippedAt}
+            deliveredAt={order.deliveredAt}
+            cancelledAt={order.cancelledAt}
+          />
         </div>
 
-        {/* Details */}
         <div className="space-y-4">
           <div className="bg-card rounded-xl border p-4">
-            <div className="flex items-center gap-2 mb-2"><MapPin className="h-4 w-4 text-muted-foreground" /><span className="font-medium">Alamat Pengiriman</span></div>
+            <div className="flex items-center gap-2 mb-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium">Alamat Pengiriman</span>
+            </div>
             {address && (
               <div className="text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">{address.recipient}</p>
+                <p className="font-medium text-foreground">
+                  {address.recipient}
+                </p>
                 <p>{address.phone}</p>
-                <p>{address.street}, {address.city}, {address.province} {address.postalCode}</p>
+                <p>
+                  {address.street}, {address.city}, {address.province}{" "}
+                  {address.postalCode}
+                </p>
               </div>
             )}
           </div>
 
           <div className="bg-card rounded-xl border p-4">
-            <div className="flex items-center gap-2 mb-2"><CreditCard className="h-4 w-4 text-muted-foreground" /><span className="font-medium">Pembayaran</span></div>
-            <p className="text-sm">{PAYMENT_METHOD_LABELS[order.paymentMethod]}</p>
-            <Badge variant={order.paymentStatus === "PAID" ? "delivered" : "pending"} className="mt-1">
-              {order.paymentStatus === "PAID" ? "Sudah Dibayar" : "Menunggu Pembayaran"}
+            <div className="flex items-center gap-2 mb-2">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium">Pembayaran</span>
+            </div>
+            <p className="text-sm">
+              {PAYMENT_METHOD_LABELS[order.paymentMethod]}
+            </p>
+            <Badge
+              variant={order.paymentStatus === "PAID" ? "delivered" : "pending"}
+              className="mt-1"
+            >
+              {order.paymentStatus === "PAID"
+                ? "Sudah Dibayar"
+                : "Menunggu Pembayaran"}
             </Badge>
           </div>
         </div>
       </div>
 
-      {/* Items */}
       <div className="bg-card rounded-xl border p-6">
         <h3 className="font-semibold mb-4">Produk Dipesan</h3>
         <div className="space-y-4">
@@ -239,7 +360,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
               <div className="w-20 h-20 rounded-lg bg-muted shrink-0" />
               <div className="flex-1">
                 <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-muted-foreground">{item.quantity} x {formatPrice(item.price)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {item.quantity} x {formatPrice(item.price)}
+                </p>
               </div>
               <p className="font-semibold">{formatPrice(item.subtotal)}</p>
             </div>
@@ -249,22 +372,74 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         <Separator className="my-4" />
 
         <div className="space-y-2 text-sm">
-          <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Ongkos Kirim</span><span>{order.shippingCost === 0 ? <span className="text-green-600">Gratis</span> : formatPrice(order.shippingCost)}</span></div>
-          {order.discount > 0 && <div className="flex justify-between text-green-600"><span>Diskon</span><span>-{formatPrice(order.discount)}</span></div>}
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Subtotal</span>
+            <span>{formatPrice(order.subtotal)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Ongkos Kirim</span>
+            <span>
+              {order.shippingCost === 0 ? (
+                <span className="text-green-600">Gratis</span>
+              ) : (
+                formatPrice(order.shippingCost)
+              )}
+            </span>
+          </div>
+          {order.discount > 0 && (
+            <div className="flex justify-between text-green-600">
+              <span>Diskon</span>
+              <span>-{formatPrice(order.discount)}</span>
+            </div>
+          )}
           <Separator className="my-2" />
-          <div className="flex justify-between font-semibold text-lg"><span>Total</span><span className="text-primary">{formatPrice(order.total)}</span></div>
+          <div className="flex justify-between font-semibold text-lg">
+            <span>Total</span>
+            <span className="text-primary">{formatPrice(order.total)}</span>
+          </div>
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex gap-3">
-        {order.status === "PENDING" && order.paymentStatus === "PENDING" && <Button>Bayar Sekarang</Button>}
+        {order.status === "PENDING" && order.paymentStatus === "PENDING" && (
+          <Button>Bayar Sekarang</Button>
+        )}
         {order.status === "DELIVERED" && <Button>Beri Ulasan</Button>}
-        <Button variant="outline"><MessageCircle className="h-4 w-4 mr-2" />Hubungi Penjual</Button>
-        <Button variant="outline"><FileText className="h-4 w-4 mr-2" />Cetak Invoice</Button>
+        <Button variant="outline">
+          <MessageCircle className="h-4 w-4 mr-2" />
+          Hubungi Penjual
+        </Button>
+        <Button variant="outline">
+          <FileText className="h-4 w-4 mr-2" />
+          Cetak Invoice
+        </Button>
       </div>
     </div>
+  );
+}
+
+function OrderDetailSkeleton() {
+  return (
+    <div className="flex-1 space-y-6">
+      <Skeleton className="h-20 w-full" />
+      <div className="grid md:grid-cols-2 gap-6">
+        <Skeleton className="h-64" />
+        <div className="space-y-4">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
+  const { id } = await params;
+
+  return (
+    <Suspense fallback={<OrderDetailSkeleton />}>
+      <OrderDetailContent orderId={id} />
+    </Suspense>
   );
 }
 
@@ -403,6 +578,7 @@ FILE: src/app/(account)/wishlist/page.tsx
 ========================================
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Heart, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -411,13 +587,22 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { useWishlistStore } from "@/stores/wishlist-store";
 
 export default function WishlistPage() {
+  const router = useRouter();
   const { items, clearWishlist } = useWishlistStore();
 
   if (items.length === 0) {
     return (
       <div className="flex-1">
         <h1 className="text-2xl font-heading font-bold mb-6">Wishlist</h1>
-        <EmptyState icon={Heart} title="Wishlist Kosong" description="Simpan produk favoritmu di sini" action={{ label: "Jelajahi Produk", onClick: () => window.location.href = "/products" }} />
+        <EmptyState
+          icon={Heart}
+          title="Wishlist Kosong"
+          description="Simpan produk favoritmu di sini"
+          action={{
+            label: "Jelajahi Produk",
+            onClick: () => router.push("/products"),
+          }}
+        />
       </div>
     );
   }
@@ -425,9 +610,20 @@ export default function WishlistPage() {
   return (
     <div className="flex-1">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold">Wishlist ({items.length})</h1>
-        <Button variant="ghost" size="sm" className="text-red-500" onClick={() => { clearWishlist(); toast.success("Wishlist dikosongkan"); }}>
-          <Trash2 className="h-4 w-4 mr-2" />Hapus Semua
+        <h1 className="text-2xl font-heading font-bold">
+          Wishlist ({items.length})
+        </h1>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-red-500"
+          onClick={() => {
+            clearWishlist();
+            toast.success("Wishlist dikosongkan");
+          }}
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          Hapus Semua
         </Button>
       </div>
       <ProductGrid products={items} columns={3} />
@@ -467,31 +663,55 @@ FILE: src/app/(admin)/admin/categories/page.tsx
 ========================================
 "use client";
 
+import * as React from "react";
 import { Plus, Edit, Trash2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { mockCategories } from "@/data/mock-categories";
 
 export default function AdminCategoriesPage() {
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-heading font-bold text-white">Manajemen Kategori</h1>
-        <Dialog>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Tambah Kategori</Button></DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Tambah Kategori Baru</DialogTitle></DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2"><Label>Nama Kategori</Label><Input placeholder="Masukkan nama" /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input placeholder="nama-kategori" /></div>
-              <Button className="w-full">Simpan</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <h1 className="text-2xl font-heading font-bold text-white">
+          Manajemen Kategori
+        </h1>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Tambah Kategori
+        </Button>
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tambah Kategori Baru</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nama Kategori</Label>
+              <Input placeholder="Masukkan nama" />
+            </div>
+            <div className="space-y-2">
+              <Label>Slug</Label>
+              <Input placeholder="nama-kategori" />
+            </div>
+            <Button className="w-full" onClick={() => setIsDialogOpen(false)}>
+              Simpan
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div className="divide-y divide-slate-700">
@@ -503,10 +723,16 @@ export default function AdminCategoriesPage() {
                 <p className="text-sm text-slate-400">/{category.slug}</p>
               </div>
               <Badge variant="secondary">{category.productCount} produk</Badge>
-              <Badge variant={category.isActive ? "delivered" : "cancelled"}>{category.isActive ? "Aktif" : "Nonaktif"}</Badge>
+              <Badge variant={category.isActive ? "delivered" : "cancelled"}>
+                {category.isActive ? "Aktif" : "Nonaktif"}
+              </Badge>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon"><Edit className="h-4 w-4 text-slate-400" /></Button>
-                <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-red-400" /></Button>
+                <Button variant="ghost" size="icon">
+                  <Edit className="h-4 w-4 text-slate-400" />
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Trash2 className="h-4 w-4 text-red-400" />
+                </Button>
               </div>
             </div>
           ))}
@@ -1355,7 +1581,10 @@ import { Label } from "@/components/ui/label";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { CheckoutSteps } from "@/components/checkout/checkout-steps";
 import { AddressSelector } from "@/components/checkout/address-selector";
-import { ShippingOptions, shippingOptions } from "@/components/checkout/shipping-options";
+import {
+  ShippingOptions,
+  shippingOptions,
+} from "@/components/checkout/shipping-options";
 import { PaymentMethods } from "@/components/checkout/payment-methods";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { useCartStore } from "@/stores/cart-store";
@@ -1366,17 +1595,30 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, getCartTotal, clearCart } = useCartStore();
   const [step, setStep] = React.useState(1);
-  const [selectedAddress, setSelectedAddress] = React.useState(mockAddresses[0]?.id || null);
+  const [selectedAddress, setSelectedAddress] = React.useState(
+    mockAddresses[0]?.id || null
+  );
   const [selectedShipping, setSelectedShipping] = React.useState("regular");
   const [selectedPayment, setSelectedPayment] = React.useState("BANK_TRANSFER");
   const [notes, setNotes] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const subtotal = getCartTotal();
-  const shippingCost = subtotal > 100000 && selectedShipping === "regular" ? 0 : shippingOptions.find((s) => s.id === selectedShipping)?.price || 0;
+  const shippingCost =
+    subtotal > 100000 && selectedShipping === "regular"
+      ? 0
+      : shippingOptions.find((s) => s.id === selectedShipping)?.price || 0;
 
   const handleNext = () => {
-    if (step === 1 && !selectedAddress) { toast.error("Pilih alamat pengiriman"); return; }
+    if (step === 1 && !selectedAddress) {
+      toast.error("Pilih alamat pengiriman");
+      return;
+    }
     if (step < 4) setStep(step + 1);
   };
 
@@ -1389,45 +1631,92 @@ export default function CheckoutPage() {
     router.push(`/orders/${orderNumber}?success=true`);
   };
 
+  // Redirect jika cart kosong (hanya setelah mounted)
+  React.useEffect(() => {
+    if (isMounted && items.length === 0) {
+      router.push("/cart");
+    }
+  }, [isMounted, items.length, router]);
+
+  // Jangan render apapun sampai mounted
+  if (!isMounted) {
+    return null;
+  }
+
   if (items.length === 0) {
-    router.push("/cart");
     return null;
   }
 
   return (
     <Container className="py-6">
-      <Breadcrumbs items={[{ label: "Keranjang", href: "/cart" }, { label: "Checkout" }]} className="mb-6" />
+      <Breadcrumbs
+        items={[{ label: "Keranjang", href: "/cart" }, { label: "Checkout" }]}
+        className="mb-6"
+      />
       <CheckoutSteps currentStep={step} />
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          {step === 1 && <AddressSelector addresses={mockAddresses} selectedId={selectedAddress} onSelect={setSelectedAddress} />}
-          {step === 2 && <ShippingOptions selectedId={selectedShipping} onSelect={setSelectedShipping} freeShipping={subtotal > 100000} />}
-          {step === 3 && <PaymentMethods selectedId={selectedPayment} onSelect={setSelectedPayment} />}
+          {step === 1 && (
+            <AddressSelector
+              addresses={mockAddresses}
+              selectedId={selectedAddress}
+              onSelect={setSelectedAddress}
+            />
+          )}
+          {step === 2 && (
+            <ShippingOptions
+              selectedId={selectedShipping}
+              onSelect={setSelectedShipping}
+              freeShipping={subtotal > 100000}
+            />
+          )}
+          {step === 3 && (
+            <PaymentMethods
+              selectedId={selectedPayment}
+              onSelect={setSelectedPayment}
+            />
+          )}
           {step === 4 && (
             <div className="space-y-6">
               <div className="p-4 bg-muted/50 rounded-xl">
                 <h4 className="font-medium mb-2">Alamat Pengiriman</h4>
-                <p className="text-sm text-muted-foreground">{mockAddresses.find((a) => a.id === selectedAddress)?.street}</p>
+                <p className="text-sm text-muted-foreground">
+                  {mockAddresses.find((a) => a.id === selectedAddress)?.street}
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>Catatan (opsional)</Label>
-                <Textarea placeholder="Catatan untuk penjual..." value={notes} onChange={(e) => setNotes(e.target.value)} />
+                <Textarea
+                  placeholder="Catatan untuk penjual..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
               </div>
             </div>
           )}
 
           <div className="flex justify-between pt-4">
-            <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 1}>Kembali</Button>
+            <Button
+              variant="outline"
+              onClick={() => setStep(step - 1)}
+              disabled={step === 1}
+            >
+              Kembali
+            </Button>
             {step < 4 ? (
               <Button onClick={handleNext}>Lanjutkan</Button>
             ) : (
-              <Button onClick={handlePlaceOrder} isLoading={isLoading}>Buat Pesanan</Button>
+              <Button onClick={handlePlaceOrder} isLoading={isLoading}>
+                Buat Pesanan
+              </Button>
             )}
           </div>
         </div>
 
-        <div><OrderSummary shippingCost={shippingCost} /></div>
+        <div>
+          <OrderSummary shippingCost={shippingCost} />
+        </div>
       </div>
     </Container>
   );
@@ -1503,6 +1792,7 @@ FILE: src/app/(main)/products/page.tsx
 "use client";
 
 import * as React from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { ProductGrid } from "@/components/product/product-grid";
@@ -1511,12 +1801,19 @@ import { FilterSidebar } from "@/components/search/filter-sidebar";
 import { SortDropdown } from "@/components/search/sort-dropdown";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Package } from "lucide-react";
 import { mockProducts } from "@/data/mock-products";
 import { useFilterStore } from "@/stores/filter-store";
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(true);
   const { category, priceRange, rating, inStock, sortBy } = useFilterStore();
@@ -1534,7 +1831,9 @@ export default function ProductsPage() {
     filteredProducts = filteredProducts.filter((p) => p.categoryId === category);
   }
   if (priceRange[0] > 0 || priceRange[1] < 50000000) {
-    filteredProducts = filteredProducts.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    filteredProducts = filteredProducts.filter(
+      (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
+    );
   }
   if (rating) {
     filteredProducts = filteredProducts.filter((p) => p.rating >= rating);
@@ -1558,50 +1857,77 @@ export default function ProductsPage() {
       filteredProducts.sort((a, b) => b.rating - a.rating);
       break;
     default:
-      filteredProducts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      filteredProducts.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
   }
 
   return (
+    <div className="flex gap-6">
+      <FilterSidebar />
+
+      <div className="flex-1">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-heading font-bold">Semua Produk</h1>
+            <p className="text-muted-foreground">
+              {filteredProducts.length} produk ditemukan
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <SortDropdown />
+          </div>
+        </div>
+
+        {isLoading ? (
+          <ProductGridSkeleton count={8} />
+        ) : filteredProducts.length === 0 ? (
+          <EmptyState
+            icon={Package}
+            title="Tidak ada produk"
+            description="Coba ubah filter atau kata kunci pencarian"
+          />
+        ) : (
+          <>
+            <ProductGrid products={filteredProducts} columns={4} />
+            <div className="mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious href="#" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">2</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
     <Container className="py-6">
       <Breadcrumbs items={[{ label: "Produk" }]} className="mb-6" />
-
-      <div className="flex gap-6">
-        <FilterSidebar />
-
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-heading font-bold">Semua Produk</h1>
-              <p className="text-muted-foreground">{filteredProducts.length} produk ditemukan</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="lg:hidden"><FilterSidebar /></div>
-              <SortDropdown />
-            </div>
-          </div>
-
-          {isLoading ? (
-            <ProductGridSkeleton count={8} />
-          ) : filteredProducts.length === 0 ? (
-            <EmptyState icon={Package} title="Tidak ada produk" description="Coba ubah filter atau kata kunci pencarian" />
-          ) : (
-            <>
-              <ProductGrid products={filteredProducts} columns={4} />
-              <div className="mt-8">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
-                    <PaginationItem><PaginationLink href="#" isActive>1</PaginationLink></PaginationItem>
-                    <PaginationItem><PaginationLink href="#">2</PaginationLink></PaginationItem>
-                    <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
-                    <PaginationItem><PaginationNext href="#" /></PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+      <Suspense fallback={<ProductGridSkeleton count={8} />}>
+        <ProductsContent />
+      </Suspense>
     </Container>
   );
 }
@@ -1612,39 +1938,65 @@ FILE: src/app/(main)/search/page.tsx
 "use client";
 
 import * as React from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ProductGrid } from "@/components/product/product-grid";
+import { ProductGridSkeleton } from "@/components/product/product-skeleton";
 import { FilterSidebar } from "@/components/search/filter-sidebar";
 import { SortDropdown } from "@/components/search/sort-dropdown";
 import { EmptyState } from "@/components/shared/empty-state";
 import { mockProducts } from "@/data/mock-products";
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
 
-  const filteredProducts = mockProducts.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()) || p.description?.toLowerCase().includes(query.toLowerCase()));
+  const filteredProducts = mockProducts.filter(
+    (p) =>
+      p.name.toLowerCase().includes(query.toLowerCase()) ||
+      p.description?.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
-    <Container className="py-6">
+    <>
       <div className="mb-6">
-        <h1 className="text-2xl font-heading font-bold">Hasil pencarian &quot;{query}&quot;</h1>
-        <p className="text-muted-foreground">{filteredProducts.length} produk ditemukan</p>
+        <h1 className="text-2xl font-heading font-bold">
+          Hasil pencarian &quot;{query}&quot;
+        </h1>
+        <p className="text-muted-foreground">
+          {filteredProducts.length} produk ditemukan
+        </p>
       </div>
 
       <div className="flex gap-6">
         <FilterSidebar />
         <div className="flex-1">
-          <div className="flex justify-end mb-6"><SortDropdown /></div>
+          <div className="flex justify-end mb-6">
+            <SortDropdown />
+          </div>
           {filteredProducts.length === 0 ? (
-            <EmptyState icon={Search} title="Tidak ditemukan" description={`Tidak ada produk yang cocok dengan "${query}"`} />
+            <EmptyState
+              icon={Search}
+              title="Tidak ditemukan"
+              description={`Tidak ada produk yang cocok dengan "${query}"`}
+            />
           ) : (
             <ProductGrid products={filteredProducts} columns={4} />
           )}
         </div>
       </div>
+    </>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Container className="py-6">
+      <Suspense fallback={<ProductGridSkeleton count={8} />}>
+        <SearchContent />
+      </Suspense>
     </Container>
   );
 }
@@ -2300,11 +2652,18 @@ FILE: src/components/cart/cart-drawer.tsx
 ========================================
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
 import { useCartStore } from "@/stores/cart-store";
@@ -2313,9 +2672,10 @@ import { formatPrice } from "@/lib/utils";
 export function CartDrawer() {
   const { items, updateQuantity, removeItem, getCartTotal } = useCartStore();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
@@ -2327,7 +2687,9 @@ export function CartDrawer() {
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md flex flex-col">
-        <SheetHeader><SheetTitle>Keranjang ({itemCount})</SheetTitle></SheetHeader>
+        <SheetHeader>
+          <SheetTitle>Keranjang ({itemCount})</SheetTitle>
+        </SheetHeader>
 
         {items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center py-8">
@@ -2341,14 +2703,32 @@ export function CartDrawer() {
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-3">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted shrink-0">
-                      <Image src={item.product.images[0]} alt={item.product.name} fill className="object-cover" />
+                      <Image
+                        src={item.product.images[0]}
+                        alt={item.product.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm line-clamp-1">{item.product.name}</p>
-                      <p className="text-sm font-semibold text-primary mt-1">{formatPrice(item.variant?.price || item.product.price)}</p>
+                      <p className="font-medium text-sm line-clamp-1">
+                        {item.product.name}
+                      </p>
+                      <p className="text-sm font-semibold text-primary mt-1">
+                        {formatPrice(item.variant?.price || item.product.price)}
+                      </p>
                       <div className="flex items-center justify-between mt-2">
-                        <QuantitySelector value={item.quantity} onChange={(qty) => updateQuantity(item.id, qty)} size="sm" />
-                        <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)} className="h-8 w-8 text-red-500">
+                        <QuantitySelector
+                          value={item.quantity}
+                          onChange={(qty) => updateQuantity(item.id, qty)}
+                          size="sm"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeItem(item.id)}
+                          className="h-8 w-8 text-red-500"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -2359,11 +2739,16 @@ export function CartDrawer() {
             </ScrollArea>
             <div className="border-t pt-4 space-y-4">
               <div className="flex justify-between font-semibold">
-                <span>Subtotal</span><span>{formatPrice(getCartTotal())}</span>
+                <span>Subtotal</span>
+                <span>{formatPrice(getCartTotal())}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <SheetClose asChild><Button variant="outline" asChild><Link href="/cart">Lihat Keranjang</Link></Button></SheetClose>
-                <SheetClose asChild><Button asChild><Link href="/checkout">Checkout</Link></Button></SheetClose>
+                <Button variant="outline" onClick={() => setIsOpen(false)} asChild>
+                  <Link href="/cart">Lihat Keranjang</Link>
+                </Button>
+                <Button onClick={() => setIsOpen(false)} asChild>
+                  <Link href="/checkout">Checkout</Link>
+                </Button>
               </div>
             </div>
           </>
@@ -2458,16 +2843,26 @@ export function CartSummary() {
 
   return (
     <div className="bg-card rounded-xl border p-6 sticky top-24">
-      <h2 className="font-heading font-semibold text-lg mb-4">Ringkasan Belanja</h2>
+      <h2 className="font-heading font-semibold text-lg mb-4">
+        Ringkasan Belanja
+      </h2>
 
       <div className="space-y-3 text-sm">
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Subtotal ({items.length} item)</span>
+          <span className="text-muted-foreground">
+            Subtotal ({items.length} item)
+          </span>
           <span>{formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Ongkos Kirim</span>
-          <span>{shipping === 0 ? <span className="text-green-600">Gratis</span> : formatPrice(shipping)}</span>
+          <span>
+            {shipping === 0 ? (
+              <span className="text-green-600">Gratis</span>
+            ) : (
+              formatPrice(shipping)
+            )}
+          </span>
         </div>
       </div>
 
@@ -2485,9 +2880,12 @@ export function CartSummary() {
         <span className="text-primary">{formatPrice(total)}</span>
       </div>
 
-      <Button className="w-full" size="lg" asChild disabled={items.length === 0}>
-        <Link href="/checkout"><ShoppingBag className="h-5 w-5 mr-2" />Checkout</Link>
-      </Button>
+      <Link href="/checkout">
+        <Button className="w-full" size="lg" disabled={items.length === 0}>
+          <ShoppingBag className="h-5 w-5 mr-2" />
+          Checkout
+        </Button>
+      </Link>
 
       {subtotal < 100000 && (
         <p className="text-xs text-muted-foreground text-center mt-3">
@@ -2606,7 +3004,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Address } from "@/types";
 import { AddressForm } from "./address-form";
@@ -2631,30 +3028,29 @@ export function AddressSelector({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">Alamat Pengiriman</h3>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Tambah Alamat
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Tambah Alamat Baru</DialogTitle>
-            </DialogHeader>
-            <AddressForm
-              onSubmit={(data) => {
-                onAddNew?.({
-                  ...data,
-                  country: "Indonesia",
-                  isDefault: data.isDefault ?? false,
-                });
-                setIsDialogOpen(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Tambah Alamat
+        </Button>
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Tambah Alamat Baru</DialogTitle>
+          </DialogHeader>
+          <AddressForm
+            onSubmit={(data) => {
+              onAddNew?.({
+                ...data,
+                country: "Indonesia",
+                isDefault: data.isDefault ?? false,
+              });
+              setIsDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <RadioGroup
         value={selectedId || ""}
@@ -2675,9 +3071,7 @@ export function AddressSelector({
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-medium">{address.label}</span>
-                {address.isDefault && (
-                  <Badge variant="secondary">Utama</Badge>
-                )}
+                {address.isDefault && <Badge variant="secondary">Utama</Badge>}
               </div>
               <p className="font-semibold">{address.recipient}</p>
               <p className="text-sm text-muted-foreground">{address.phone}</p>
@@ -5327,7 +5721,15 @@ FILE: src/components/seller/sales-chart.tsx
 ========================================
 "use client";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { formatPrice } from "@/lib/utils";
 
 const data = [
@@ -5344,14 +5746,24 @@ export function SalesChart() {
   return (
     <div className="bg-card rounded-xl border p-6">
       <h3 className="font-semibold mb-4">Penjualan Minggu Ini</h3>
-      <div className="h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[300px] w-full min-h-[300px]">
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
             <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-            <YAxis stroke="#64748b" fontSize={12} tickFormatter={(v) => `${v / 1000000}jt`} />
+            <YAxis
+              stroke="#64748b"
+              fontSize={12}
+              tickFormatter={(v) => `${v / 1000000}jt`}
+            />
             <Tooltip formatter={(value: number) => formatPrice(value)} />
-            <Line type="monotone" dataKey="sales" stroke="#3b82f6" strokeWidth={2} dot={{ fill: "#3b82f6" }} />
+            <Line
+              type="monotone"
+              dataKey="sales"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={{ fill: "#3b82f6" }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -5499,9 +5911,7 @@ export function EmptyState({
         </p>
       )}
       {action && (
-        <Button onClick={action.onClick} variant="default">
-          {action.label}
-        </Button>
+        <Button onClick={action.onClick}>{action.label}</Button>
       )}
     </div>
   );
@@ -6321,10 +6731,19 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, isLoading = false, children, disabled, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    // Jangan gunakan Slot jika isLoading true
+    if (asChild && !isLoading) {
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        />
+      )
+    }
 
     return (
-      <Comp
+      <button
         data-slot="button"
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
@@ -6333,7 +6752,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         {children}
-      </Comp>
+      </button>
     )
   }
 )
@@ -7558,6 +7977,7 @@ import { cn, formatPrice } from "@/lib/utils";
 export interface PriceProps {
   price: number;
   originalPrice?: number | null;
+  comparePrice?: number | null;
   discount?: number | null;
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -7566,6 +7986,7 @@ export interface PriceProps {
 export function Price({
   price,
   originalPrice,
+  comparePrice,
   discount,
   size = "md",
   className,
@@ -7582,24 +8003,21 @@ export function Price({
     lg: "text-base",
   };
 
+  const displayOriginalPrice = originalPrice ?? comparePrice;
+
   return (
     <div className={cn("flex items-center gap-2 flex-wrap", className)}>
-      <span
-        className={cn(
-          "font-bold text-primary",
-          sizeClasses[size]
-        )}
-      >
+      <span className={cn("font-bold text-primary", sizeClasses[size])}>
         {formatPrice(price)}
       </span>
-      {originalPrice && originalPrice > price && (
+      {displayOriginalPrice && displayOriginalPrice > price && (
         <span
           className={cn(
             "text-muted-foreground line-through",
             originalSizeClasses[size]
           )}
         >
-          {formatPrice(originalPrice)}
+          {formatPrice(displayOriginalPrice)}
         </span>
       )}
       {discount && discount > 0 && (

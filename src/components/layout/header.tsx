@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -44,9 +45,9 @@ import { ROUTES } from "@/lib/constants";
 import { getInitials } from "@/lib/utils";
 
 const navLinks = [
-  { href: "/categories", label: "Kategori" },
-  { href: "/products", label: "Produk" },
-  { href: "/stores", label: "Toko" },
+  { href: ROUTES.CATEGORIES, label: "Kategori" },
+  { href: ROUTES.PRODUCTS, label: "Produk" },
+  { href: ROUTES.STORES, label: "Toko" },
 ];
 
 export function Header() {
@@ -90,19 +91,26 @@ export function Header() {
             🎉 Gratis Ongkir untuk pembelian di atas Rp 100.000
           </p>
           <div className="flex items-center gap-4">
-            <a
+            <Link
               href="/seller/dashboard"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               Mulai Berjualan
-            </a>
+            </Link>
             <span className="text-muted-foreground">|</span>
-            <a
+            <Link
               href="/help"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               Bantuan
-            </a>
+            </Link>
+            <span className="text-muted-foreground">|</span>
+            <Link
+              href="/login?demo=true"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium"
+            >
+              🎭 Demo
+            </Link>
           </div>
         </div>
 
@@ -123,7 +131,7 @@ export function Header() {
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-2">
                 {navLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.href}
                     href={link.href}
                     className={cn(
@@ -134,7 +142,7 @@ export function Header() {
                     )}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </nav>
             </SheetContent>
@@ -166,7 +174,7 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
@@ -177,7 +185,7 @@ export function Header() {
                 )}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -286,10 +294,10 @@ export function Header() {
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <a href="/settings">
+                    <Link href="/settings">
                       <Settings className="mr-2 h-4 w-4" />
                       Pengaturan
-                    </a>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={logout}
